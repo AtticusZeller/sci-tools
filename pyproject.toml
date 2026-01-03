@@ -31,7 +31,7 @@ maintainers = [{ name = "A.J.Zeller", email = "hello@atticux.me" }]
 
 dynamic = ["version"] # https://hatch.pypa.io/latest/config/metadata/#version
 dependencies = [
-    "jonckheere-terpstra",
+    "jonckheere-test>=0.1.1",
     "statsmodels>=0.14.6",
     "typer>=0.21.0",
 ]
@@ -246,8 +246,5 @@ filename = "src/sci_tools/__init__.py"
 filename = "CHANGELOG.md"
 search   = "unreleased"
 replace  = "{new_version} - {now:%Y-%m-%d}"
-
-[tool.uv.sources]
-jonckheere-terpstra = { git = "https://github.com/MatthewCorney/jonckheere_terpstra" }
 
 # https://callowayproject.github.io/bump-my-version/reference/search-and-replace-config/

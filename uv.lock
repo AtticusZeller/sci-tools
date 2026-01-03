@@ -317,14 +317,16 @@ wheels = [
 ]
 
 [[package]]
-name = "jonckheere-terpstra"
-version = "0.1.0"
-source = { git = "https://github.com/MatthewCorney/jonckheere_terpstra#d42b16e69b6b74ab3722f4c8ec949917eb0e34cf" }
+name = "jonckheere-test"
+version = "0.1.1"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "more-itertools" },
     { name = "numpy" },
-    { name = "pandas" },
     { name = "scipy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/0e/1d/cb38dab4b408ace436a98df63d19744d84ec4c4ccefb23d3244998604058/jonckheere_test-0.1.1.tar.gz", hash = "sha256:67097202f3b2566d30ebeb5f3e09b1f448614fae6ed29272d7d8715fe56ade5d", size = 8219, upload-time = "2025-12-20T17:09:14.634Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1f/9f/e54aab94e1944af38bebc6eb1bd8bf0ab99ed52d77bfd82fd8ef607cd6e1/jonckheere_test-0.1.1-py3-none-any.whl", hash = "sha256:7776260e5f2ca04c1b65d114b7b10a1065c75e54bde6193e56721c7f26439c86", size = 7673, upload-time = "2025-12-20T17:09:13.418Z" },
 ]
 
 [[package]]
@@ -534,15 +536,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/e9/65/224d9aefca5f25581611a234206ad2417bbdb90b3001eb74fb5548c5c4c2/mkdocs_publisher-1.4.2.tar.gz", hash = "sha256:efd339ffd3c93f1e574df744d37b93a62585b48d40dcac7bbad32551bbe4f8c7", size = 45035, upload-time = "2024-08-11T21:32:44.929Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d9/b3/64679fd4f963e08f30e3fa0b5c9aa6632e24bf418c7ecbe8b5e5df481fe3/mkdocs_publisher-1.4.2-py3-none-any.whl", hash = "sha256:ba592b66fedd1fadc63b8042b9b1ec824281a28d3d2f04ea9569b0943cb387dc", size = 92231, upload-time = "2024-08-11T21:32:43.239Z" },
-]
-
-[[package]]
-name = "more-itertools"
-version = "10.8.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/ea/5d/38b681d3fce7a266dd9ab73c66959406d565b3e85f21d5e66e1181d93721/more_itertools-10.8.0.tar.gz", hash = "sha256:f638ddf8a1a0d134181275fb5d58b086ead7c6a72429ad725c67503f13ba30bd", size = 137431, upload-time = "2025-09-02T15:23:11.018Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/a4/8e/469e5a4a2f5855992e425f3cb33804cc07bf18d48f2db061aec61ce50270/more_itertools-10.8.0-py3-none-any.whl", hash = "sha256:52d4362373dcf7c52546bc4af9a86ee7c4579df9a8dc268be0a2f949d376cc9b", size = 69667, upload-time = "2025-09-02T15:23:09.635Z" },
 ]
 
 [[package]]
@@ -1125,7 +1118,7 @@ wheels = [
 name = "sci-tool"
 source = { editable = "." }
 dependencies = [
-    { name = "jonckheere-terpstra" },
+    { name = "jonckheere-test" },
     { name = "statsmodels" },
     { name = "typer" },
 ]
@@ -1153,7 +1146,7 @@ docs = [
 
 [package.metadata]
 requires-dist = [
-    { name = "jonckheere-terpstra", git = "https://github.com/MatthewCorney/jonckheere_terpstra" },
+    { name = "jonckheere-test", specifier = ">=0.1.1" },
     { name = "statsmodels", specifier = ">=0.14.6" },
     { name = "typer", specifier = ">=0.21.0" },
 ]

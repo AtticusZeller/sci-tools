@@ -1,6 +1,6 @@
 import pandas as pd
 import typer
-from jonckheere_terpstra import jonckheere_terpstra_test
+from jonckheere_test import jonckheere_test
 from rich.console import Console
 from rich.table import Table
 
@@ -9,7 +9,6 @@ from statsmodels.stats.multitest import multipletests
 
 app = typer.Typer()
 console = Console()
-
 
 @app.command()
 def jt_test(
@@ -27,14 +26,15 @@ def jt_test(
         "jt_results_fdr.csv", "--output", help="结果保存路径"
     ),
     alternative: str = typer.Option(
-        "two_sided", "--alt", help="假设检验方向 ('two_sided', 'greater', 'less')"
+        "two_sided", "--alt", help="假设检验方向 ('two_sided', 'greater'->increasing, 'less'->decreasing)"
     ),
-    continuity: bool = typer.Option(True, "--continuity", help="是否应用连续性校正"),
     fdr_alpha: float = typer.Option(0.05, "--fdr", help="FDR 显著性阈值 (默认 0.05)"),
+    # 注意：移除了 continuity 参数，因为新包不接受此参数
 ):
     """
     批量执行 Jonckheere-Terpstra 趋势检验，并进行 FDR (Benjamini-Hochberg) 校正。
     """
+    # ... [读取数据和验证列的代码保持不变] ...
     # 1. 读取数据
     try:
         df = pd.read_csv(csv_file)
@@ -56,7 +56,7 @@ def jt_test(
         df_filtered[group_column], categories=ordered_groups, ordered=True
     )
 
-    # 4. 筛选数值列（排除 ID 和 Group）
+    # 4. 筛选数值列
     cols_to_exclude = [group_column]
     if id_column in df.columns:
         cols_to_exclude.append(id_column)
@@ -71,6 +71,19 @@ def jt_test(
     console.print(
         f"正在分析 [bold green]{len(target_columns)}[/bold green] 个变量，分组顺序: {ordered_groups}"
     )
+
+    # === 修改开始：映射参数 ===
+    # 将旧的参数习惯映射到新包要求的参数值
+    alt_map = {
+        "two_sided": "two-sided",
+        "two-sided": "two-sided",
+        "greater": "increasing",
+        "increasing": "increasing",
+        "less": "decreasing",
+        "decreasing": "decreasing"
+    }
+    jt_alternative = alt_map.get(alternative, "two-sided")
+    # === 修改结束 ===
 
     # 5. 循环计算 Raw P-value
     results = []
@@ -92,9 +105,21 @@ def jt_test(
                 x = current_data[col].values
                 g = current_data[group_column].cat.codes.values
 
-                jtrsum, pval, zstat = jonckheere_terpstra_test(
-                    x=x, g=g, continuity=continuity, alternative=alternative
+                # === 修改开始：调用新包 ===
+                # 新包返回的是一个对象，而不是元组
+                # 参数名变为 groups，移除了 continuity
+                result_obj = jonckheere_test(
+                    x,
+                    groups=g,
+                    alternative=jt_alternative
                 )
+
+                # 从对象中提取属性
+                jtrsum = result_obj.statistic
+                pval = result_obj.p_value
+                # z_score 可能在 exact 模式下为 None，处理一下以防报错
+                zstat = result_obj.z_score if result_obj.z_score is not None else 0
+                # === 修改结束 ===
 
                 results.append(
                     {
@@ -112,25 +137,21 @@ def jt_test(
                 # 忽略计算错误的列（例如全为空值）
                 continue
 
+    # ... [后续 FDR 计算和保存结果的代码保持不变] ...
     # 6. 计算 FDR (Benjamini-Hochberg)
     results_df = pd.DataFrame(results)
 
     if not results_df.empty:
-        # 使用 statsmodels 进行多重假设检验校正
-        # method='fdr_bh' 即 Benjamini-Hochberg 方法
         reject, pvals_corrected, _, _ = multipletests(
             results_df["P_value_Raw"], alpha=fdr_alpha, method="fdr_bh"
         )
 
         results_df["FDR"] = pvals_corrected
-        # 标记是否显著 (True/False)
         results_df[f"Sig_Raw (p<{fdr_alpha})"] = results_df["P_value_Raw"] < fdr_alpha
         results_df[f"Sig_FDR (q<{fdr_alpha})"] = results_df["FDR"] < fdr_alpha
 
-        # 排序：先按是否 FDR 显著排序，再按 FDR 值从小到大排序
         results_df = results_df.sort_values(by=["FDR", "P_value_Raw"])
 
-        # 7. 打印统计摘要
         n_raw_sig = results_df[f"Sig_Raw (p<{fdr_alpha})"].sum()
         n_fdr_sig = results_df[f"Sig_FDR (q<{fdr_alpha})"].sum()
 
@@ -149,8 +170,6 @@ def jt_test(
                 f"FDR correction reduced significant hits by [bold red]{reduction:.1f}%[/bold red]."
             )
 
-        # 8. 保存结果
-        # 将显著的列放在前面方便查看
         cols = [
             "Variable",
             "P_value_Raw",
@@ -166,7 +185,6 @@ def jt_test(
         )
     else:
         console.print("[bold red]No results to process.[/bold red]")
-
 
 @app.command()
 def version() -> None:
