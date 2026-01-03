@@ -11,7 +11,7 @@ packages = ["src/sci_tools"]
 # FROM: https://hatch.pypa.io/latest/build/
 
 [project]
-name = "sci-tools"
+name = "sci-tool"
 description = "python template package"
 classifiers = [
     "License :: OSI Approved :: MIT License",

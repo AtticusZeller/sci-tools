@@ -1122,7 +1122,7 @@ wheels = [
 ]
 
 [[package]]
-name = "sci-tools"
+name = "sci-tool"
 source = { editable = "." }
 dependencies = [
     { name = "jonckheere-terpstra" },
