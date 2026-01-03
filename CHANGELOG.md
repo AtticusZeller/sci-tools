@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.0.3 - 2026-01-03
+
+### 🐛 Bug Fixes
+
+- Package with  jonckheere_test
+
+### ⚙️ Miscellaneous Tasks
+
+- Fix installation and usage commands in README
+
 ## 0.0.2 - 2026-01-03
 
 ### 🐛 Bug Fixes
