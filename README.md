@@ -3,13 +3,12 @@
 ## install
 
 ```bash
-uv tool install sci-tools
+uv tool install sci-tool
 ```
 
 ## usage
 
 ```bash
-sci-tools --help
 st --help
 ```
 
